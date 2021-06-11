@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">MyNoteApp</string>
+
+    <string name="firstHead">First Head</string>
+    <string name="secondHead">Second Head</string>
+    <string name="thirdHead">Third Head</string>
+    <string name="fourthHead">Fourth Head</string>
+    <string name="fifthHead">Fifth Head</string>
+
+    <string name="firstBody">First Body</string>
+    <string name="secondBody">Second Body</string>
+    <string name="thirdBody">Third Body</string>
+    <string name="fourthBody">Fourth Body</string>
+    <string name="fifthBody">Fifth Body</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
