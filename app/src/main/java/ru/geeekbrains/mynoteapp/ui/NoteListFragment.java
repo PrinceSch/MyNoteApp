@@ -44,9 +44,12 @@ public class NoteListFragment extends Fragment {
         List<Note> notes = noteRepository.getNotes();
 
         for (Note note: notes){
-            View itemView = LayoutInflater.from(requireContext()).inflate(R.layout.note_head, notesList,true);
+            View itemView = LayoutInflater.from(requireContext()).inflate(R.layout.note_head, notesList,false);
+
             TextView noteHead = itemView.findViewById(R.id.note_head_view);
             noteHead.setText(note.getHead());
+
+            notesList.addView(itemView);
         }
 
     }
