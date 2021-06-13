@@ -1,5 +1,6 @@
 package ru.geeekbrains.mynoteapp.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,7 +22,28 @@ import ru.geeekbrains.mynoteapp.domain.NoteRepositoryImpl;
 
 public class NoteListFragment extends Fragment {
 
+    public interface OnNoteClicked{
+        void onNoteClicked(Note note);
+    }
+
     NoteRepositoryImpl noteRepository;
+
+    private OnNoteClicked onNoteClicked;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if (context instanceof OnNoteClicked){
+            onNoteClicked = (OnNoteClicked) context;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onNoteClicked = null;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,7 +68,17 @@ public class NoteListFragment extends Fragment {
         for (Note note: notes){
             View itemView = LayoutInflater.from(requireContext()).inflate(R.layout.note_head, notesList,false);
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onNoteClicked != null){
+                        onNoteClicked.onNoteClicked(note);
+                    }
+                }
+            });
+
             TextView noteHead = itemView.findViewById(R.id.note_head_view);
+
             noteHead.setText(note.getHead());
 
             notesList.addView(itemView);
