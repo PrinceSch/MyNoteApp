@@ -8,10 +8,10 @@ import androidx.annotation.StringRes;
 public class Note implements Parcelable {
 
     @StringRes
-    private int head;
+    private final int head;
     @StringRes
-    private int body;
-    private String date;
+    private final int body;
+    private final String date;
     private boolean favourite = false;
 
     public Note(int head, int body, String date) {
