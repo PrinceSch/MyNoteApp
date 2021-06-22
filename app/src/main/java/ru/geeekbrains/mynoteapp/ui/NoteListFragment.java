@@ -78,6 +78,15 @@ public class NoteListFragment extends Fragment {
         itemDecoration.setDrawable(getResources().getDrawable(R.drawable.separator, null));
         notesList.addItemDecoration(itemDecoration);
 
+        noteAdapter.setListener(new NoteAdapter.OnNoteClickedListener() {
+            @Override
+            public void onNoteClickedListener(@NonNull Note note) {
+                if (onNoteClicked != null){
+                    onNoteClicked.onNoteClicked(note);
+                }
+            }
+        });
+
     }
 
     @Override

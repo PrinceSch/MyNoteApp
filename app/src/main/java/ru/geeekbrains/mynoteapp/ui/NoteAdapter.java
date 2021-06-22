@@ -16,7 +16,21 @@ import ru.geeekbrains.mynoteapp.domain.Note;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
 
+    public interface OnNoteClickedListener{
+        void onNoteClickedListener(@NonNull Note note);
+    }
+
     private final List<Note> notes = new ArrayList<>();
+
+    private OnNoteClickedListener listener;
+
+    public OnNoteClickedListener getListener() {
+        return listener;
+    }
+
+    public void setListener(OnNoteClickedListener listener) {
+        this.listener = listener;
+    }
 
     public void setData(List<Note> toSet){
         notes.clear();
@@ -51,6 +65,15 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
 
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                   if (getListener() != null){
+                       getListener().onNoteClickedListener(notes.get(getAdapterPosition()));
+                   }
+                }
+            });
 
             noteHead = itemView.findViewById(R.id.head);
             noteDate = itemView.findViewById(R.id.date);

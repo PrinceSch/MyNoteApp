@@ -17,6 +17,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import ru.geeekbrains.mynoteapp.domain.Note;
 import ru.geeekbrains.mynoteapp.ui.AboutFragment;
+import ru.geeekbrains.mynoteapp.ui.NoteAdapter;
 import ru.geeekbrains.mynoteapp.ui.NoteDetailActivity;
 import ru.geeekbrains.mynoteapp.ui.NoteDetailFragment;
 import ru.geeekbrains.mynoteapp.ui.NoteListFragment;

@@ -7,7 +7,7 @@
     android:padding="@dimen/default_padding"
     tools:context=".ui.NoteDetailFragment">
 
-    <TextView
+    <EditText
         android:id="@+id/note_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,12 +25,18 @@
         style="@style/TextAppearance.MaterialComponents.Headline5"
         />
 
-    <TextView
+    <EditText
         android:id="@+id/note_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="@string/firstHead"
         style="@style/TextAppearance.MaterialComponents.Headline5"
         />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/save_button"
+        android:text="@string/save"/>
 
 </LinearLayout>
