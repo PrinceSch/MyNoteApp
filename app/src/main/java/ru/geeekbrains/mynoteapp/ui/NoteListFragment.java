@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,28 +63,15 @@ public class NoteListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        LinearLayout notesList = view.findViewById(R.id.note_list_container);
+        RecyclerView notesList = view.findViewById(R.id.recycler_view_notes);
+        notesList.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         List<Note> notes = noteRepository.getNotes();
 
-        for (Note note: notes){
-            View itemView = LayoutInflater.from(requireContext()).inflate(R.layout.note_head, notesList,false);
+        NoteAdapter noteAdapter = new NoteAdapter();
+        noteAdapter.setData(notes);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (onNoteClicked != null){
-                        onNoteClicked.onNoteClicked(note);
-                    }
-                }
-            });
-
-            TextView noteHead = itemView.findViewById(R.id.note_head_view);
-
-            noteHead.setText(note.getHead());
-
-            notesList.addView(itemView);
-        }
+        notesList.setAdapter(noteAdapter);
 
     }
 
