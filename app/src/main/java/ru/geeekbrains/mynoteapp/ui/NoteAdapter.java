@@ -49,8 +49,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
     public void onBindViewHolder(@NonNull NoteAdapter.NoteViewHolder holder, int position) {
 
         Note note = notes.get(position);
-        holder.noteHead.setText(note.getHead());
-        holder.noteDate.setText(note.getDate());
+        holder.bind(note);
     }
 
     @Override
@@ -74,10 +73,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
                    }
                 }
             });
-
-            noteHead = itemView.findViewById(R.id.head);
-            noteDate = itemView.findViewById(R.id.date);
         }
+
+        public void bind(Note note) {
+            noteHead.setText(note.getHead());
+            noteDate.setText(note.getDate());
+        }
+
     }
 
 
