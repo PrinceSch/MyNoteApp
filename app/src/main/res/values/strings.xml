@@ -22,5 +22,6 @@
     <string name="year">Year: 2021</string>
     <string name="username">UserName</string>
     <string name="have_a_nice_day">Have a nice day!</string>
+    <string name="save">save</string>
 
 </resources>

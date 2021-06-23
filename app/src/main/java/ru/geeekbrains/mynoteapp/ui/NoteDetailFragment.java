@@ -9,7 +9,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import ru.geeekbrains.mynoteapp.R;
 import ru.geeekbrains.mynoteapp.domain.Note;
@@ -38,13 +41,25 @@ public class NoteDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TextView noteHead = view.findViewById(R.id.note_head);
+        EditText noteHead = view.findViewById(R.id.note_head);
         TextView noteDate = view.findViewById(R.id.note_date);
-        TextView noteBody = view.findViewById(R.id.note_body);
+        EditText noteBody = view.findViewById(R.id.note_body);
 
         Note note = getArguments().getParcelable(ARG_NOTE);
         noteHead.setText(note.getHead());
         noteDate.setText(note.getDate());
         noteBody.setText(note.getBody());
+
+        Button saveButton = view.findViewById(R.id.save_button);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Note saved", Toast.LENGTH_SHORT).show();
+                //TODO впилить адекватное сохранение. не уверен, как менять стринговые ресурсы, которые для заметки установлены.
+            }
+        });
     }
+
+
+
 }
