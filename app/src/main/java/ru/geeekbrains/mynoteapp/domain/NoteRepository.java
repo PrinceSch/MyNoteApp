@@ -7,4 +7,6 @@ public interface NoteRepository {
     List<Note> getNotes();
 
     Note addNote(String head, String body);
+
+    void removeNote (Note note);
 }

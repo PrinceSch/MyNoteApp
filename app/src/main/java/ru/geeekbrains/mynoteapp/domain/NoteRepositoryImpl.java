@@ -40,4 +40,9 @@ public class NoteRepositoryImpl implements NoteRepository {
         return note;
     }
 
+    @Override
+    public void removeNote(Note note) {
+        result.remove(note);
+    }
+
 }

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -20,16 +21,33 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         void onNoteClickedListener(@NonNull Note note);
     }
 
-    private final List<Note> notes = new ArrayList<>();
+    public interface OnNoteLongClickedListener{
+        void onNoteLongClickedListener(@NonNull Note note, int index);
+    }
 
+    private final List<Note> notes = new ArrayList<>();
+    private final Fragment fragment;
     private OnNoteClickedListener listener;
+
+    private OnNoteLongClickedListener listenerLong;
 
     public OnNoteClickedListener getListener() {
         return listener;
     }
+    public OnNoteLongClickedListener getListenerLong() {
+        return listenerLong;
+    }
+
+    public void setListenerLong(OnNoteLongClickedListener listenerLong) {
+        this.listenerLong = listenerLong;
+    }
 
     public void setListener(OnNoteClickedListener listener) {
         this.listener = listener;
+    }
+
+    public NoteAdapter(Fragment fragment) {
+        this.fragment = fragment;
     }
 
     public void setData(List<Note> toSet){
@@ -57,6 +75,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         return notes.size();
     }
 
+    public void remove(Note note) {
+        notes.remove(note);
+    }
+
     class NoteViewHolder extends RecyclerView.ViewHolder{
 
         TextView noteHead;
@@ -65,13 +87,21 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                   if (getListener() != null){
-                       getListener().onNoteClickedListener(notes.get(getAdapterPosition()));
-                   }
+            fragment.registerForContextMenu(itemView);
+
+            itemView.setOnClickListener(v -> {
+               if (getListener() != null){
+                   getListener().onNoteClickedListener(notes.get(getAdapterPosition()));
+               }
+            });
+
+            itemView.setOnLongClickListener(v -> {
+                itemView.showContextMenu();
+                if (getListenerLong() != null){
+                    int index = getAdapterPosition();
+                    getListenerLong().onNoteLongClickedListener(notes.get(index), index);
                 }
+                return true;
             });
         }
 

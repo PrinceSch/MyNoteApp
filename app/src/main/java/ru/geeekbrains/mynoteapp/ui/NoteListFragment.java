@@ -10,11 +10,11 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -30,8 +30,11 @@ public class NoteListFragment extends Fragment {
     }
 
     static NoteRepositoryImpl noteRepository;
-
+    static NoteAdapter noteAdapter;
     private OnNoteClicked onNoteClicked;
+
+    private int longClickedIndex;
+    private Note longClickedNote;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -69,7 +72,7 @@ public class NoteListFragment extends Fragment {
 
         List<Note> notes = noteRepository.getNotes();
 
-        NoteAdapter noteAdapter = new NoteAdapter();
+        noteAdapter = new NoteAdapter(this);
         noteAdapter.setData(notes);
 
         notesList.setAdapter(noteAdapter);
@@ -78,13 +81,15 @@ public class NoteListFragment extends Fragment {
         itemDecoration.setDrawable(getResources().getDrawable(R.drawable.separator, null));
         notesList.addItemDecoration(itemDecoration);
 
-        noteAdapter.setListener(new NoteAdapter.OnNoteClickedListener() {
-            @Override
-            public void onNoteClickedListener(@NonNull Note note) {
-                if (onNoteClicked != null){
-                    onNoteClicked.onNoteClicked(note);
-                }
+        noteAdapter.setListener(note -> {
+            if (onNoteClicked != null){
+                onNoteClicked.onNoteClicked(note);
             }
+        });
+
+        noteAdapter.setListenerLong((note, index) -> {
+            longClickedNote = note;
+            longClickedIndex = index;
         });
 
     }
@@ -97,5 +102,37 @@ public class NoteListFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+    }
+
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        requireActivity().getMenuInflater().inflate(R.menu.context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_add){
+            getActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.notes_fragment, new AddNoteFragment(), "New Note")
+                    .addToBackStack(null)
+                    .commit();
+            return true;
+        }
+        if (item.getItemId() == R.id.menu_update){
+            noteAdapter.notifyDataSetChanged();
+            return true;
+        }
+
+        if (item.getItemId() == R.id.menu_delete){
+            noteRepository.removeNote(longClickedNote);
+            noteAdapter.remove(longClickedNote);
+            noteAdapter.notifyItemRemoved(longClickedIndex);
+            return true;
+        }
+
+        return super.onContextItemSelected(item);
     }
 }
