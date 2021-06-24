@@ -54,7 +54,11 @@ public class MainActivity extends AppCompatActivity implements NoteListFragment.
             drawerLayout.closeDrawer(GravityCompat.START);
 
             if(item.getItemId() == R.id.new_note){
-                Toast.makeText(getApplicationContext(), R.string.create_new_note, Toast.LENGTH_SHORT).show();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.notes_fragment, new AddNoteFragment(), "New Note")
+                        .addToBackStack(null)
+                        .commit();
                 return true;
             } else if (item.getItemId() == R.id.favourites){
                 Toast.makeText(getApplicationContext(), R.string.favourite_notes, Toast.LENGTH_SHORT).show();
