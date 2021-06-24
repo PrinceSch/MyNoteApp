@@ -76,6 +76,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         }
 
         public void bind(Note note) {
+
+            noteHead = itemView.findViewById(R.id.head);
+            noteDate = itemView.findViewById(R.id.date);
+
             noteHead.setText(note.getHead());
             noteDate.setText(note.getDate());
         }

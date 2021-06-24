@@ -29,7 +29,7 @@ public class NoteListFragment extends Fragment {
         void onNoteClicked(Note note);
     }
 
-    NoteRepositoryImpl noteRepository;
+    static NoteRepositoryImpl noteRepository;
 
     private OnNoteClicked onNoteClicked;
 
