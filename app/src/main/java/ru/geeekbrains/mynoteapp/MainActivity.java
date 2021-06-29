@@ -11,15 +11,21 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import ru.geeekbrains.mynoteapp.domain.MainRouter;
 import ru.geeekbrains.mynoteapp.domain.Note;
+import ru.geeekbrains.mynoteapp.domain.RouterHolder;
 import ru.geeekbrains.mynoteapp.ui.AboutFragment;
 import ru.geeekbrains.mynoteapp.ui.AddNoteFragment;
 import ru.geeekbrains.mynoteapp.ui.NoteDetailFragment;
 import ru.geeekbrains.mynoteapp.ui.NoteListFragment;
 
 
-public class MainActivity extends AppCompatActivity implements NoteListFragment.OnNoteClicked {
+public class MainActivity extends AppCompatActivity implements NoteListFragment.OnNoteClicked, RouterHolder {
+
+    private MainRouter router;
+    public static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     @Override
@@ -27,12 +33,14 @@ public class MainActivity extends AppCompatActivity implements NoteListFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        router = new MainRouter(getSupportFragmentManager());
+
+        if (savedInstanceState == null) {
+            router.showNotes();
+        }
+
         AppCompatImageButton addButton = findViewById(R.id.add_button);
-        addButton.setOnClickListener(v -> getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.notes_fragment, new AddNoteFragment(), "New Note")
-                .addToBackStack(null)
-                .commit());
+        addButton.setOnClickListener(v -> router.addNote());
 
         DrawerLayout drawerLayout = findViewById(R.id.main_screen);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -44,21 +52,12 @@ public class MainActivity extends AppCompatActivity implements NoteListFragment.
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.notes_fragment, new NoteListFragment(), "NoteListFragment")
-                .commit();
-
         NavigationView navigationView = findViewById(R.id.menu_view);
         navigationView.setNavigationItemSelectedListener(item -> {
             drawerLayout.closeDrawer(GravityCompat.START);
 
             if(item.getItemId() == R.id.new_note){
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.notes_fragment, new AddNoteFragment(), "New Note")
-                        .addToBackStack(null)
-                        .commit();
+                router.addNote();
                 return true;
             } else if (item.getItemId() == R.id.favourites){
                 Toast.makeText(getApplicationContext(), R.string.favourite_notes, Toast.LENGTH_SHORT).show();
@@ -67,11 +66,7 @@ public class MainActivity extends AppCompatActivity implements NoteListFragment.
                 Toast.makeText(getApplicationContext(), R.string.settings, Toast.LENGTH_SHORT).show();
                 return true;
             } else if (item.getItemId() == R.id.about){
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.notes_fragment, new AboutFragment(), "AboutFragment")
-                        .addToBackStack(null)
-                        .commit();
+                router.showAbout();
                 return true;
             }
 
@@ -81,20 +76,12 @@ public class MainActivity extends AppCompatActivity implements NoteListFragment.
 
     @Override
     public void onNoteClicked(Note note) {
-
         boolean isLandscape = getResources().getBoolean(R.bool.isLandscape);
+        router.showDetail(isLandscape, note);
+    }
 
-        if (isLandscape){
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.notes_fragment, NoteDetailFragment.newInstance(note))
-                    .commit();
-        } else {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.notes_fragment, NoteDetailFragment.newInstance(note))
-                    .addToBackStack(null)
-                    .commit();
-        }
+    @Override
+    public MainRouter getMainRouter() {
+        return router;
     }
 }

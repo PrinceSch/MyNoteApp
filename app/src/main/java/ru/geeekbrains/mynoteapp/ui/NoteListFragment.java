@@ -18,9 +18,14 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import ru.geeekbrains.mynoteapp.MainActivity;
 import ru.geeekbrains.mynoteapp.R;
+import ru.geeekbrains.mynoteapp.domain.Callback;
+import ru.geeekbrains.mynoteapp.domain.MainRouter;
 import ru.geeekbrains.mynoteapp.domain.Note;
-import ru.geeekbrains.mynoteapp.domain.NoteRepositoryImpl;
+import ru.geeekbrains.mynoteapp.domain.NoteRepository;
+import ru.geeekbrains.mynoteapp.domain.NotesFirestoreRepository;
+import ru.geeekbrains.mynoteapp.domain.RouterHolder;
 
 
 public class NoteListFragment extends Fragment {
@@ -29,12 +34,15 @@ public class NoteListFragment extends Fragment {
         void onNoteClicked(Note note);
     }
 
-    static NoteRepositoryImpl noteRepository;
+    static NoteRepository noteRepository;
     static NoteAdapter noteAdapter;
     private OnNoteClicked onNoteClicked;
+    public final static String TAG = "NoteListFragment";
 
     private int longClickedIndex;
     private Note longClickedNote;
+
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -54,7 +62,17 @@ public class NoteListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        noteRepository = new NoteRepositoryImpl();
+
+        noteAdapter = new NoteAdapter(this);
+
+        noteRepository = NotesFirestoreRepository.INSTANCE;
+        noteRepository.getNotes(new Callback<List<Note>>() {
+            @Override
+            public void onSuccess(List<Note> result) {
+                noteAdapter.setData(result);
+                noteAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Nullable
@@ -70,11 +88,6 @@ public class NoteListFragment extends Fragment {
         RecyclerView notesList = view.findViewById(R.id.recycler_view_notes);
         notesList.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        List<Note> notes = noteRepository.getNotes();
-
-        noteAdapter = new NoteAdapter(this);
-        noteAdapter.setData(notes);
-
         notesList.setAdapter(noteAdapter);
 
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL);
@@ -82,8 +95,9 @@ public class NoteListFragment extends Fragment {
         notesList.addItemDecoration(itemDecoration);
 
         noteAdapter.setListener(note -> {
-            if (onNoteClicked != null){
-                onNoteClicked.onNoteClicked(note);
+            if (requireActivity() instanceof RouterHolder){
+                MainRouter router = ((RouterHolder) requireActivity()).getMainRouter();
+                router.showDetail(note);
             }
         });
 
@@ -113,12 +127,10 @@ public class NoteListFragment extends Fragment {
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_add){
-            getActivity()
-                    .getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.notes_fragment, new AddNoteFragment(), "New Note")
-                    .addToBackStack(null)
-                    .commit();
+            if (requireActivity() instanceof RouterHolder){
+                MainRouter router = ((RouterHolder) requireActivity()).getMainRouter();
+                router.showDetail(longClickedNote);
+            }
             return true;
         }
         if (item.getItemId() == R.id.menu_update){

@@ -13,11 +13,12 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import ru.geeekbrains.mynoteapp.R;
-import ru.geeekbrains.mynoteapp.domain.NoteRepositoryImpl;
+import ru.geeekbrains.mynoteapp.domain.NoteRepository;
 
 public class AddNoteFragment extends Fragment {
 
-    NoteRepositoryImpl repository = NoteListFragment.noteRepository;
+    NoteRepository repository = NoteListFragment.noteRepository;
+    public final static String TAG = "New Note";
 
     public AddNoteFragment() {
     }
