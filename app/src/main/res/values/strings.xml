@@ -23,5 +23,10 @@
     <string name="username">UserName</string>
     <string name="have_a_nice_day">Have a nice day!</string>
     <string name="save">save</string>
+    <string name="add_note">Add note</string>
+    <string name="add">Add</string>
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
+    <string name="clear">Clear</string>
 
 </resources>

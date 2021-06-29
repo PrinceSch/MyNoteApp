@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import ru.geeekbrains.mynoteapp.R;
 import ru.geeekbrains.mynoteapp.domain.Note;
@@ -51,12 +50,10 @@ public class NoteDetailFragment extends Fragment {
         noteBody.setText(note.getBody());
 
         Button saveButton = view.findViewById(R.id.save_button);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), "Note saved", Toast.LENGTH_SHORT).show();
-                //TODO впилить адекватное сохранение. не уверен, как менять стринговые ресурсы, которые для заметки установлены.
-            }
+        saveButton.setOnClickListener(v -> {
+            note.setHead(String.valueOf(noteHead.getText()));
+            note.setBody(String.valueOf(noteBody.getText()));
+            getActivity().getSupportFragmentManager().popBackStack();
         });
     }
 
