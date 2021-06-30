@@ -16,9 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
-import ru.geeekbrains.mynoteapp.MainActivity;
 import ru.geeekbrains.mynoteapp.R;
 import ru.geeekbrains.mynoteapp.domain.Callback;
 import ru.geeekbrains.mynoteapp.domain.MainRouter;
@@ -66,12 +63,9 @@ public class NoteListFragment extends Fragment {
         noteAdapter = new NoteAdapter(this);
 
         noteRepository = NotesFirestoreRepository.INSTANCE;
-        noteRepository.getNotes(new Callback<List<Note>>() {
-            @Override
-            public void onSuccess(List<Note> result) {
-                noteAdapter.setData(result);
-                noteAdapter.notifyDataSetChanged();
-            }
+        noteRepository.getNotes(result -> {
+            noteAdapter.setData(result);
+            noteAdapter.notifyDataSetChanged();
         });
     }
 
@@ -139,9 +133,13 @@ public class NoteListFragment extends Fragment {
         }
 
         if (item.getItemId() == R.id.menu_delete){
-            noteRepository.removeNote(longClickedNote);
-            noteAdapter.remove(longClickedNote);
-            noteAdapter.notifyItemRemoved(longClickedIndex);
+            noteRepository.removeNote(longClickedNote, new Callback<Object>() {
+                @Override
+                public void onSuccess(Object result) {
+                    noteAdapter.remove(longClickedNote);
+                    noteAdapter.notifyItemRemoved(longClickedIndex);
+                }
+            });
             return true;
         }
 

@@ -46,7 +46,7 @@ public class NoteDetailFragment extends Fragment {
 
         Note note = getArguments().getParcelable(ARG_NOTE);
         noteHead.setText(note.getHead());
-        noteDate.setText(note.getDate());
+        noteDate.setText(note.getDate().toString());
         noteBody.setText(note.getBody());
 
         Button saveButton = view.findViewById(R.id.save_button);
