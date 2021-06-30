@@ -25,7 +25,6 @@ import ru.geeekbrains.mynoteapp.ui.NoteListFragment;
 public class MainActivity extends AppCompatActivity implements NoteListFragment.OnNoteClicked, RouterHolder {
 
     private MainRouter router;
-    public static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     @Override

@@ -1,15 +1,21 @@
 package ru.geeekbrains.mynoteapp.domain;
 
+import android.os.Looper;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import ru.geeekbrains.mynoteapp.R;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import android.os.Handler;
 
 public class NoteRepositoryImpl implements NoteRepository {
 
     private final ArrayList<Note> result = new ArrayList<>();
+    public static final NoteRepository INSTANCE = new NoteRepositoryImpl();
+    private ExecutorService executor = Executors.newCachedThreadPool();
+    private Handler handler = new Handler(Looper.getMainLooper());
+
 
     public NoteRepositoryImpl() {
         result.add(0, new Note("First Head", "First Body", "2020-05-1"));
@@ -27,8 +33,15 @@ public class NoteRepositoryImpl implements NoteRepository {
     }
 
     @Override
-    public List<Note> getNotes(){
-        return result;
+    public void getNotes(Callback<List<Note>> callback){
+        executor.execute(() -> {
+            try {
+                Thread.sleep(2000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            handler.post(() -> callback.onSuccess(result));
+        });
     }
 
     @Override

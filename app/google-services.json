@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "446810389962",
+    "project_id": "princesch-noteapp",
+    "storage_bucket": "princesch-noteapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:446810389962:android:5d89d060bf9597741a6333",
+        "android_client_info": {
+          "package_name": "ru.geeekbrains.mynoteapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "446810389962-ognc4540hn2vcp6qghgd70gl0fbkd6sp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuON75-HjlcouGtNIl1Cq3l52LwzlxYYM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "446810389962-ognc4540hn2vcp6qghgd70gl0fbkd6sp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
