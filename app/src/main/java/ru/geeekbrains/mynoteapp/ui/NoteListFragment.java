@@ -1,10 +1,12 @@
 package ru.geeekbrains.mynoteapp.ui;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import ru.geeekbrains.mynoteapp.R;
 import ru.geeekbrains.mynoteapp.domain.Callback;
@@ -133,16 +136,43 @@ public class NoteListFragment extends Fragment {
         }
 
         if (item.getItemId() == R.id.menu_delete){
-            noteRepository.removeNote(longClickedNote, new Callback<Object>() {
-                @Override
-                public void onSuccess(Object result) {
-                    noteAdapter.remove(longClickedNote);
-                    noteAdapter.notifyItemRemoved(longClickedIndex);
-                }
-            });
+            shorAlertDelete();
+//            noteRepository.removeNote(longClickedNote, new Callback<Object>() {
+//                @Override
+//                public void onSuccess(Object result) {
+//                    noteAdapter.remove(longClickedNote);
+//                    noteAdapter.notifyItemRemoved(longClickedIndex);
+//                }
+//            });
             return true;
         }
 
         return super.onContextItemSelected(item);
+    }
+
+    private void shorAlertDelete() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.alert_dialog_title)
+                .setIcon(R.drawable.ic_baseline_warning_24)
+                .setPositiveButton(R.string.delete_confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        noteRepository.removeNote(longClickedNote, new Callback<Object>() {
+                            @Override
+                            public void onSuccess(Object result) {
+                                noteAdapter.remove(longClickedNote);
+                                noteAdapter.notifyItemRemoved(longClickedIndex);
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton(R.string.delete_cansel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(requireContext(), "NegativeButton", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        builder.show();
     }
 }

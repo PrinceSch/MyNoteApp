@@ -71,7 +71,7 @@ public class NotesFirestoreRepository implements NoteRepository {
                     @Override
                     public void onComplete(@NonNull Task<DocumentReference> task) {
                         if (task.isSuccessful()){
-                            Note note = new Note(task.getResult().getId().toString(),head, body, date);
+                            Note note = new Note(task.getResult().getId(), head, body, date);
                             callback.onSuccess(note);
                         }
                     }
