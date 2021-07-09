@@ -12,12 +12,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.List;
+
 import ru.geeekbrains.mynoteapp.R;
-import ru.geeekbrains.mynoteapp.domain.NoteRepositoryImpl;
+import ru.geeekbrains.mynoteapp.domain.Callback;
+import ru.geeekbrains.mynoteapp.domain.Note;
+import ru.geeekbrains.mynoteapp.domain.NoteRepository;
 
 public class AddNoteFragment extends Fragment {
 
-    NoteRepositoryImpl repository = NoteListFragment.noteRepository;
+    NoteRepository repository = NoteListFragment.noteRepository;
+    NoteAdapter adapter = NoteListFragment.noteAdapter;
+    public final static String TAG = "New Note";
 
     public AddNoteFragment() {
     }
@@ -43,8 +49,19 @@ public class AddNoteFragment extends Fragment {
         Button addButton = view.findViewById(R.id.button_add);
 
         addButton.setOnClickListener(v -> {
-            repository.addNote(String.valueOf(head.getText()), String.valueOf(body.getText()));
-            getActivity().getSupportFragmentManager().popBackStack();
+            repository.addNote(String.valueOf(head.getText()), String.valueOf(body.getText()), new Callback<Note>() {
+                @Override
+                public void onSuccess(Note note) {
+                    repository.getNotes(new Callback<List<Note>>() {
+                        @Override
+                        public void onSuccess(List<Note> result) {
+                            adapter.setData(result);
+                            adapter.notifyDataSetChanged();
+                            getParentFragmentManager().popBackStack();
+                        }
+                    });
+                }
+            });
         });
 
     }

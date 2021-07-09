@@ -13,6 +13,8 @@ import ru.geeekbrains.mynoteapp.R;
 
 public class AboutFragment extends Fragment {
 
+    public final static String TAG = "AboutFragment";
+
     public AboutFragment() {
         // Required empty public constructor
     }

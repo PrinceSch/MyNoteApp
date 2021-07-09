@@ -28,5 +28,8 @@
     <string name="update">Update</string>
     <string name="delete">Delete</string>
     <string name="clear">Clear</string>
+    <string name="alert_dialog_title">Confirm delete!</string>
+    <string name="delete_confirm">Confirm</string>
+    <string name="delete_cansel">Cansel</string>
 
 </resources>

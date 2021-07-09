@@ -6,7 +6,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/notes_list_fragment"
+        android:id="@+id/notes_fragment"
         android:name="ru.geeekbrains.mynoteapp.ui.NoteListFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/notes_list_fragment"
+        app:layout_constraintStart_toEndOf="@+id/notes_fragment"
         tools:context=".MainActivity" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

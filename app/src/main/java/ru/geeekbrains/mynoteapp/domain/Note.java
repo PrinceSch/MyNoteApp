@@ -3,14 +3,18 @@ package ru.geeekbrains.mynoteapp.domain;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 public class Note implements Parcelable {
 
+    private String id;
     private String head;
     private String body;
-    private String date;
+    private Date date;
     private boolean favourite = false;
 
-    public Note(String head, String body, String date) {
+    public Note(String id, String head, String body, Date date) {
+        this.id = id;
         this.head = head;
         this.body = body;
         this.date = date;
@@ -25,9 +29,10 @@ public class Note implements Parcelable {
     }
 
     protected Note(Parcel in) {
+        id = in.readString();
         head = in.readString();
         body = in.readString();
-        date = in.readString();
+        date = new Date(in.readLong());
         favourite = in.readByte() != 0;
     }
 
@@ -51,7 +56,7 @@ public class Note implements Parcelable {
         return body;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
@@ -66,9 +71,14 @@ public class Note implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(head);
         dest.writeString(body);
-        dest.writeString(date);
+        dest.writeLong(date.getTime());
         dest.writeByte((byte) (favourite ? 1 : 0));
+    }
+
+    public String getId() {
+        return id;
     }
 }

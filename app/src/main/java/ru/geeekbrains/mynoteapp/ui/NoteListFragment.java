@@ -1,10 +1,12 @@
 package ru.geeekbrains.mynoteapp.ui;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,12 +17,15 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.util.List;
+import android.widget.Toast;
 
 import ru.geeekbrains.mynoteapp.R;
+import ru.geeekbrains.mynoteapp.domain.Callback;
+import ru.geeekbrains.mynoteapp.domain.MainRouter;
 import ru.geeekbrains.mynoteapp.domain.Note;
-import ru.geeekbrains.mynoteapp.domain.NoteRepositoryImpl;
+import ru.geeekbrains.mynoteapp.domain.NoteRepository;
+import ru.geeekbrains.mynoteapp.domain.NotesFirestoreRepository;
+import ru.geeekbrains.mynoteapp.domain.RouterHolder;
 
 
 public class NoteListFragment extends Fragment {
@@ -29,12 +34,15 @@ public class NoteListFragment extends Fragment {
         void onNoteClicked(Note note);
     }
 
-    static NoteRepositoryImpl noteRepository;
+    static NoteRepository noteRepository;
     static NoteAdapter noteAdapter;
     private OnNoteClicked onNoteClicked;
+    public final static String TAG = "NoteListFragment";
 
     private int longClickedIndex;
     private Note longClickedNote;
+
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -54,7 +62,14 @@ public class NoteListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        noteRepository = new NoteRepositoryImpl();
+
+        noteAdapter = new NoteAdapter(this);
+
+        noteRepository = NotesFirestoreRepository.INSTANCE;
+        noteRepository.getNotes(result -> {
+            noteAdapter.setData(result);
+            noteAdapter.notifyDataSetChanged();
+        });
     }
 
     @Nullable
@@ -70,11 +85,6 @@ public class NoteListFragment extends Fragment {
         RecyclerView notesList = view.findViewById(R.id.recycler_view_notes);
         notesList.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        List<Note> notes = noteRepository.getNotes();
-
-        noteAdapter = new NoteAdapter(this);
-        noteAdapter.setData(notes);
-
         notesList.setAdapter(noteAdapter);
 
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL);
@@ -82,8 +92,9 @@ public class NoteListFragment extends Fragment {
         notesList.addItemDecoration(itemDecoration);
 
         noteAdapter.setListener(note -> {
-            if (onNoteClicked != null){
-                onNoteClicked.onNoteClicked(note);
+            if (requireActivity() instanceof RouterHolder){
+                MainRouter router = ((RouterHolder) requireActivity()).getMainRouter();
+                router.showDetail(note);
             }
         });
 
@@ -113,12 +124,10 @@ public class NoteListFragment extends Fragment {
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_add){
-            getActivity()
-                    .getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.notes_fragment, new AddNoteFragment(), "New Note")
-                    .addToBackStack(null)
-                    .commit();
+            if (requireActivity() instanceof RouterHolder){
+                MainRouter router = ((RouterHolder) requireActivity()).getMainRouter();
+                router.showDetail(longClickedNote);
+            }
             return true;
         }
         if (item.getItemId() == R.id.menu_update){
@@ -127,12 +136,43 @@ public class NoteListFragment extends Fragment {
         }
 
         if (item.getItemId() == R.id.menu_delete){
-            noteRepository.removeNote(longClickedNote);
-            noteAdapter.remove(longClickedNote);
-            noteAdapter.notifyItemRemoved(longClickedIndex);
+            shorAlertDelete();
+//            noteRepository.removeNote(longClickedNote, new Callback<Object>() {
+//                @Override
+//                public void onSuccess(Object result) {
+//                    noteAdapter.remove(longClickedNote);
+//                    noteAdapter.notifyItemRemoved(longClickedIndex);
+//                }
+//            });
             return true;
         }
 
         return super.onContextItemSelected(item);
+    }
+
+    private void shorAlertDelete() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.alert_dialog_title)
+                .setIcon(R.drawable.ic_baseline_warning_24)
+                .setPositiveButton(R.string.delete_confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        noteRepository.removeNote(longClickedNote, new Callback<Object>() {
+                            @Override
+                            public void onSuccess(Object result) {
+                                noteAdapter.remove(longClickedNote);
+                                noteAdapter.notifyItemRemoved(longClickedIndex);
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton(R.string.delete_cansel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(requireContext(), "NegativeButton", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        builder.show();
     }
 }
